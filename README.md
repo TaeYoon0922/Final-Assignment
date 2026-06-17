@@ -18,9 +18,9 @@ Streamlit + FastAPI + Docker + AWS EC2 기반 추천 웹 애플리케이션
 ## 아키텍처
 
 ```
-[사용자] → [Streamlit 프론트] → (HTTP POST /recommend) → [FastAPI 백엔드]
-                ↑                                              |
-                └────────── 추천 결과(JSON) ────────────────────┘
+[사용자] -> [Streamlit 프론트] -> (HTTP POST /recommend) -> [FastAPI 백엔드]
+                ^                                                  |
+                +------------------ 추천 결과(JSON) ---------------+
 ```
 
 - front (Streamlit): 입력 슬라이더 / 추천 버튼 / 결과 및 레이더 차트 표시
@@ -35,8 +35,8 @@ Streamlit + FastAPI + Docker + AWS EC2 기반 추천 웹 애플리케이션
 ## 추천 로직
 
 ```
-score(chain) = Σ ( user_weight[d] × chain_profile[chain][d] )   (d = 6개 지표)
-매칭률(%)     = score / (Σ user_weight[d] × 10) × 100
+score(chain) = sum( user_weight[d] * chain_profile[chain][d] )   (d = 6개 지표)
+매칭률(%)    = score / (sum(user_weight[d]) * 10) * 100
 ```
 
 매칭률 순으로 랭킹하여 1순위, 차순위, 전체 랭킹, 레이더 차트로 출력합니다.
@@ -52,7 +52,7 @@ score(chain) = Σ ( user_weight[d] × chain_profile[chain][d] )   (d = 6개 지�
 | 생태계/유동성 | TVL, 툴링, composability |
 | 탈중앙화/보안 | 시퀀서 탈중앙화, 프루프 성숙도 |
 
-### 체인 점수표 — 2026년 실측 기반
+### 체인 점수표 - 2026년 실측 기반
 
 | 체인 | EVM | 비용 | TPS | 파이널리티 | 생태계 | 탈중앙화 |
 |---|---|---|---|---|---|---|
@@ -65,11 +65,74 @@ score(chain) = Σ ( user_weight[d] × chain_profile[chain][d] )   (d = 6개 지�
 | Cosmos App-chain | 2 | 8 | 8 | 7 | 4 | 6 |
 
 점수 근거 요약
+
 - 비용: L2는 L1 대비 10~100x 저렴, ZK는 EIP-4844 이후 한 자릿수 센트 / Arbitrum ~$0.004 / L1은 가스비 높아 2점
 - TPS(실측): Ethereum ~15 / Arbitrum 40~60 / Base 159 / zkSync Era 12~15 / Solana 3,000~4,000
-- 파이널리티: 옵티미스틱(Arbitrum/Base) 7일 출금 윈도우 → 저점 / ZK(zkSync/Starknet) 1시간 내 → 고점 / Solana 6.4초
+- 파이널리티: 옵티미스틱(Arbitrum/Base) 7일 출금 윈도우(저점) / ZK(zkSync/Starknet) 1시간 내(고점) / Solana 6.4초
 - 생태계: Arbitrum/Base가 상위 8개 L2 스테이블코인 유동성의 약 64% 차지
 - 탈중앙화: Arbitrum BOLD 무허가 검증(25년 말) / 대부분 ZK는 아직 중앙화 시퀀서
+
+---
+
+## 실행 방법
+
+### Docker Compose (권장)
+```bash
+docker compose up --build
+```
+- 프론트: http://localhost:8501
+- 백엔드 문서: http://localhost:8000/docs
+
+### 로컬 실행 (Docker 없이)
+```bash
+# 터미널 1 - 백엔드
+cd back && pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000
+
+# 터미널 2 - 프론트
+cd front && pip install -r requirements.txt
+BACKEND_URL=http://localhost:8000 streamlit run app.py
+```
+
+---
+
+## AWS EC2 배포
+
+```bash
+# 1. EC2 접속 후 코드 받기
+git clone <YOUR_REPO_URL> && cd dapp-chain-recommender
+
+# 2. Docker 설치 (Amazon Linux 예시)
+sudo yum update -y && sudo yum install -y docker
+sudo service docker start && sudo usermod -aG docker $USER
+
+# 3. 빌드 & 실행
+docker compose up --build -d
+
+# 4. 상태 확인
+docker ps
+```
+
+보안 그룹 인바운드 규칙에서 아래 포트를 열어야 외부 접속이 됩니다.
+
+- 8501 (Streamlit, 필수)
+- 8000 (FastAPI, 선택)
+
+접속 주소: `http://<EC2_퍼블릭_IP>:8501`
+
+---
+
+## 데모 영상 체크리스트
+
+- [ ] 브라우저에서 `http://<EC2_IP>:8501` 접속 화면
+- [ ] dApp 유형 선택 후 슬라이더 값 자동 변경
+- [ ] 슬라이더로 우선순위 수동 조정
+- [ ] 추천받기 버튼 클릭
+- [ ] 1순위/차순위 카드 + 랭킹 + 레이더 차트 출력
+- [ ] EC2 터미널에서 `docker ps` 로 두 컨테이너 실행 확인
+- [ ] `http://<EC2_IP>:8000/docs` 로 FastAPI 연결 시연
+
+---
 
 ## 디렉토리 구조
 
