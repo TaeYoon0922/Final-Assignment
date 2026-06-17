@@ -70,3 +70,22 @@ score(chain) = Σ ( user_weight[d] × chain_profile[chain][d] )   (d = 6개 지�
 - 파이널리티: 옵티미스틱(Arbitrum/Base) 7일 출금 윈도우 → 저점 / ZK(zkSync/Starknet) 1시간 내 → 고점 / Solana 6.4초
 - 생태계: Arbitrum/Base가 상위 8개 L2 스테이블코인 유동성의 약 64% 차지
 - 탈중앙화: Arbitrum BOLD 무허가 검증(25년 말) / 대부분 ZK는 아직 중앙화 시퀀서
+
+## 디렉토리 구조
+
+```
+dapp-chain-recommender/
+├── back/
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── Dockerfile
+│   └── .dockerignore
+├── front/
+│   ├── app.py
+│   ├── requirements.txt
+│   ├── Dockerfile
+│   └── .dockerignore
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
