@@ -1,0 +1,19 @@
+services:
+  back:
+    build: ./back
+    container_name: dapp-recommender-back
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  front:
+    build: ./front
+    container_name: dapp-recommender-front
+    ports:
+      - "8501:8501"
+    environment:
+      # 컨테이너 네트워크 내부에서는 서비스명 'back'으로 통신
+      - BACKEND_URL=http://back:8000
+    depends_on:
+      - back
+    restart: unless-stopped
