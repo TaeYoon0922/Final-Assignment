@@ -66,8 +66,8 @@ score(chain) = sum( user_weight[d] * chain_profile[chain][d] )   (d = 6개 지�
 
 점수 근거 요약
 
-- 비용: L2는 L1 대비 10~100x 저렴, ZK는 EIP-4844 이후 한 자릿수 센트 / Arbitrum ~$0.004 / L1은 가스비 높아 2점
-- TPS(실측): Ethereum ~15 / Arbitrum 40~60 / Base 159 / zkSync Era 12~15 / Solana 3,000~4,000
+- 비용: L2는 L1 대비 10-100x 저렴, ZK는 EIP-4844 이후 한 자릿수 센트 / Arbitrum 약 $0.004 / L1은 가스비 높아 2점
+- TPS(실측): Ethereum 약 15 / Arbitrum 40-60 / Base 159 / zkSync Era 12-15 / Solana 3,000-4,000
 - 파이널리티: 옵티미스틱(Arbitrum/Base) 7일 출금 윈도우(저점) / ZK(zkSync/Starknet) 1시간 내(고점) / Solana 6.4초
 - 생태계: Arbitrum/Base가 상위 8개 L2 스테이블코인 유동성의 약 64% 차지
 - 탈중앙화: Arbitrum BOLD 무허가 검증(25년 말) / 대부분 ZK는 아직 중앙화 시퀀서
